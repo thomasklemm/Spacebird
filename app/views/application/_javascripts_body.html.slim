@@ -1,0 +1,30 @@
+/ application/_javascripts_body
+
+/ List.js in head
+/   Lists initalized here so I can access them in their respective variables
+
+/ Categories List
+javascript:
+  var categories_list_options = {
+      valueNames: ['fn', 'ks', 'd', 'pr', 'fr']
+    };
+
+  categories_list_options['page'] = $('.list').data('page') || 8
+javascript:
+  var categoriesList = new List('js_categories_list', categories_list_options);
+
+/ Repos List
+javascript:
+  var repos_list_options = {
+      valueNames: ['o', 'n', 'd', 'ks', 'ua']
+    };
+
+  repos_list_options['page'] = $('.list').data('page') || 8
+
+javascript:
+  var reposList = new List('js_repos_list', repos_list_options);
+
+/ livereload (in development)
+- if Rails.env.development?
+    javascript:
+      document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')

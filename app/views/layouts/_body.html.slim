@@ -1,0 +1,37 @@
+/ layouts/_body
+
+/ root
+#root
+
+  / topbar
+  #topbar
+    .row
+      .twelve.columns
+        = render 'topbar'
+
+
+  / main
+  #main.row
+
+    / Content
+    #content.twelve.columns
+
+      / flash messages
+      = render 'flash_messages'
+
+      / main body
+      = yield
+
+  / Root for footer
+  #root_footer
+
+
+/ footer
+#footer
+  .row
+    .twelve.columns
+      = render 'footer'
+
+
+/ javascripts at the end of body
+= render 'javascripts_body'

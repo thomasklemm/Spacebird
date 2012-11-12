@@ -1,0 +1,11 @@
+h2 Hello World!
+
+/ Login with Twitter / Logout
+- if current_subscriber
+  - if current_subscriber.image_url.present?
+    img.avatar src=current_subscriber.image_url alt=current_subscriber.username
+  span.name     = current_subscriber.name
+  span.username @#{current_subscriber.username}
+  = link_to 'Logout', destroy_subscriber_session_path
+- else
+  = link_to 'Login with Twitter', subscriber_omniauth_authorize_path(:twitter)

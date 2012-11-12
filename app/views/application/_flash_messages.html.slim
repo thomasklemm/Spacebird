@@ -1,0 +1,11 @@
+/ application/_flash_messages
+
+/ flash messages
+- unless response.cache_control[:public]
+  - if flash
+
+    / flash message
+    - flash.each do |type, message|
+      div class='alert-box secondary'
+        span = message
+        a href='' class='close' &times;
