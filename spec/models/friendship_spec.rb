@@ -8,7 +8,8 @@
 #  user_twitter_id   :integer          not null
 #  friend_twitter_id :integer          not null
 #  is_active         :boolean          default(TRUE)
-#  canceled_at       :datetime
+#  first_active_at   :datetime
+#  last_active_at    :datetime
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #

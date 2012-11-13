@@ -235,12 +235,13 @@ class User < ActiveRecord::Base
     # Retrieve friendships
     # and friends
     delay.retrieve_friendships(twitter_id)
+    return
   end
 
   def self.retrieve_followerships(twitter_id, opts = {})
     # Set cursor default
     # # Twitter API: Cursor == -1 identifies first page in pagination
-     opts.reverse_merge!({
+    opts.reverse_merge!({
         cursor: -1
       })
 
@@ -255,15 +256,71 @@ class User < ActiveRecord::Base
 
     # Request follower ids
     begin
-      res = Twitter.follower_ids(twitter_id, cursor: opts[:cursor])
+       result = Twitter.follower_ids(twitter_id, cursor: opts[:cursor]).ids
+       follower_twitter_ids = result.ids
     rescue Twitter::Error::NotFound
       return
     end
 
     # Update the last_active_at timestamp on retrieved relationships
-    #
-    followerships = user.followerships.where(user_id: res.ids)
-    followerships.each { |f| f.update_column(:last_active_at, Time.now.utc)}
+    # (use friend_id in friendship case here)
+    followerships = user.followerships.where(user_id: follower_twitter_ids)
+    followerships.each do |followership|
+      # REVIEW: Maybe an update_all is possible? (1 - 100 SQL calls could replace up to 5000)
+      followership.update_column(:last_active_at, Time.now.utc)
+    end
+
+    # Load next page asyncronously (delayed)
+    # if there is any
+    if result.next_cursor != 0
+      delay.retrieve_followerships(twitter_id, cursor: result.next_cursor)
+    end
+
+    # Create or find follower
+    # and add followership
+    # if not already present
+    current_follower_ids = followerships.map(&:user_twitter_id)
+
+    follower_twitter_ids.each do |follower_twitter_id|
+      unless current_followers_ids.include?(follower_twitter_id)
+        # Find or create follower
+        follower = User.find_or_create_by_twitter_id(follower_twitter_id)
+
+        # Add followership
+        user.followers << follower
+
+        # FIXME: This might lead to race condition; create followership instead and set flag when creating it
+        # Set first_active_at timestamp on followership
+        followership = user.followerships.where(user_id: follower_twitter_id)
+        followership.update_column(:first_active_at, Time.now.utc)
+      end
+    end
+
+    # Flag inactive followerships
+    # which includes setting the user's followerships_update_finished_at flag when finished
+    if result.next_cursor == 0
+      delay.flag_outdated_followerships(twitter_id)
+    end
+    return
+  end
+
+  # Flag outdated relationships
+  # by setting their is_active flag to false
+  def self.flag_outdated_followerships(twitter_id)
+    # Followerships_update_started_at timestamp
+    user      = User.find_by_twitter_id(twitter_id)
+    timestamp = user.followerships_update_started_at
+
+    # Find outdated followerships
+    outdated_followerships = user.followerships.where('last_active_at < ?', timestamp)
+
+    # Set is_active flag of outdated followerships to false
+    outdated_followerships.each do |followership|
+      followership.update_column(:is_active, false)
+    end
+
+    # Set follwerships_update_finished_at flag on user
+    user.update_column(:followerships_update_finished_at, Time.now.utc)
   end
 
   ##
