@@ -10,38 +10,81 @@ class Subscriber < ActiveRecord::Base
     self[:name] || username
   end
 
+  ##
+  # Associastions
+  #
   # Authentications
-  has_many :authentications
+  has_many :authentications, dependent: :destroy
 
-  # Find or create subscriber
-  # through Twitter oauth
-  # and create respective authentications
+  # Token
+  has_one :token, dependent: :destroy
+
+  ##
+  # Instance methods
+  #
+  # Create authentication from omniauth hash
+  def create_authentication(omniauth)
+    authentications.create! do |a|
+      a.provider = omniauth.provider
+      a.uid      = omniauth.uid
+    end
+  end
+
+  # Create or update token from omniauth hash
+  def create_or_update_token(omniauth)
+    # Update token if present
+    if token
+      token.update_attributes(
+        twitter_id: omniauth.uid.to_i,
+        token:      omniauth.credentials.token,
+        secret:     omniauth.credentials.secret
+      )
+    # or create token
+    else
+      create_token do |t|
+        t.twitter_id = omniauth.uid.to_i
+        t.token      = omniauth.credentials.token
+        t.secret     = omniauth.credentials.secret
+      end
+    end
+  end
+
+
+  # Find or create subscriber through Twitter oauth
   def self.find_or_create_subscriber_from_twitter(omniauth)
     # Find authentication
     authentication = Authentication.find_by_provider_and_uid(omniauth.provider, omniauth.uid)
 
-    # Return subscriber
+    # If authentication and subscriber are present...
     if authentication && authentication.subscriber
-      authentication.subscriber
-    # If Twitter user not yet a subscriber
-    else
-      # Create subscriber
-      subscriber = Subscriber.create! do |s|
-        s.username   = omniauth.info.nickname
-        s.name       = omniauth.info.name
-        s.image_url  = omniauth.info.image
-      end
+      subscriber = authentication.subscriber
 
-      # Create authentication
-      subscriber.authentications.create! do |a|
-        a.provider = omniauth.provider
-        a.uid      = omniauth.uid
-      end
+      # ... create or update their oauth token
+      subscriber.create_or_update_token(omniauth)
 
-      # Return subscriber
-      subscriber.save
-      subscriber
+      # ... and exit returning the subscriber instance
+      return subscriber
     end
+
+    # Create the subscriber if not present yet
+    subscriber = Subscriber.create! do |s|
+      s.username   = omniauth.info.nickname
+      s.name       = omniauth.info.name
+      s.image_url  = omniauth.info.image
+    end
+
+    # Create authentication
+    subscriber.create_authentication(omniauth)
+
+    # Create token
+    subscriber.create_or_update_token(omniauth)
+
+    # Create or update user from omniauth
+    User.create_or_update_from_omniauth(omniauth)
+
+    # Return subscriber
+    subscriber.save
+    subscriber
   end
 
   # Accessible attributes
