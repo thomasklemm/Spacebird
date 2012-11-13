@@ -11,7 +11,9 @@ class CreateFriendships < ActiveRecord::Migration
 
       # Activity
       t.boolean :is_active, default: true
-      t.datetime :canceled_at
+
+      t.datetime :first_active_at
+      t.datetime :last_active_at
 
       t.timestamps
     end

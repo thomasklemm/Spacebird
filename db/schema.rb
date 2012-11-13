@@ -29,7 +29,8 @@ ActiveRecord::Schema.define(:version => 20121113114229) do
     t.integer  "user_twitter_id",                     :null => false
     t.integer  "friend_twitter_id",                   :null => false
     t.boolean  "is_active",         :default => true
-    t.datetime "canceled_at"
+    t.datetime "first_active_at"
+    t.datetime "last_active_at"
     t.datetime "created_at",                          :null => false
     t.datetime "updated_at",                          :null => false
   end

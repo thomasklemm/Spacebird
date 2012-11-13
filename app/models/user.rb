@@ -144,122 +144,7 @@ class User < ActiveRecord::Base
   end
 
   ##
-  # 6) Friendship instance methods
-
-  # Retrieve friendships for user
-  # and add users if they are new records
-  def retrieve_friendships
-    # Set timestamp
-    update_column('friendships_updated_at', Time.now.utc)
-
-    # Retrieve friendships
-    retrieve_relationships(:friend)
-  end
-
-  # Retrieve followerships for user
-  # and add users if they are new records
-  def retrieve_followerships
-    # Set timestamp
-    update_column('followerships_updated_at', Time.now.utc)
-
-    # Retrieve friendships
-    retrieve_relationships(:follower)
-  end
-
-  alias_method :retrieve_friends, :retrieve_friendships
-  alias_method :retrieve_followers, :retrieve_followerships
-
-  def retrieve_relationships(type, opts = {})
-    # Default cursor
-    # cursor -1 signals first page (Twitter API Docs)
-    opts.reverse_merge!({cursor: -1})
-
-    # Type (friend, follower)
-    type = case type.to_s
-                when /follow/
-                  'follower'
-                when /friend/
-                  'friend'
-                else
-                  # FIXME: Raise error
-                end
-
-    # Twitter id for which to request
-    req_id = twitter_id || screen_name
-
-    # Request ids
-    begin
-      res = Twitter.send("#{ type }_ids", req_id, cursor: opts[:cursor])
-    rescue Twitter::Error::NotFound
-      return
-    end
-
-    # Update timestamps for retrieved ids
-    relationships = case type
-                      when /friend/
-                        self.send("#{ type }ships").where(user_twitter_id: twitter_id, friend_twitter_id: res.ids)
-                      when /follow/
-                        self.send("#{ type }ships").where(user_twitter_id: res.ids, friend_twitter_id: twitter_id)
-                      else
-
-                      end
-
-    # FIXME: There must be a more efficient way to do this!
-    relationships.each {|r| r.touch}
-
-    # Add relationships
-    res.ids.each do |twitter_id|
-      # Find or create user instance
-      user = User.where(twitter_id: twitter_id).first_or_create!
-
-      # Check if already relationship present
-      already_present = case type
-                          when /follow/
-                            relationships.map(&:user_twitter_id).include?(user.twitter_id)
-                          when /friend/
-                            relationships.map(&:friend_twitter_id).include?(user.twitter_id)
-                          else
-
-                          end
-
-      # Add user unless relationship already present
-      self.send("#{ type }s") << user unless already_present
-    end
-
-    # Retrieve more ids
-    res.next != 0 ? retrieve_relationships(type, cursor: res.next) : return # flag inactive relationships here
-  end
-
-  def flag_inactive_followerships
-    flag_inactive_relationships(:follower)
-  end
-
-  def flag_inactive_friendships
-    flag_inactive_relationships(:friend)
-  end
-
-  def flag_inactive_relationships(type)
-    # Type (friend, follower)
-    type = case type.to_s
-                when /follow/
-                  'follower'
-                when /friend/
-                  'friend'
-                else
-                  # FIXME: Raise error
-                end
-
-    timestamp = self.send("#{ type }ships_updated_at")
-    inactive_relationships = self.send("#{ type }ships").where('updated_at < ?', timestamp)
-
-    inactive_relationships.each do |ir|
-      # Set is_active flag
-      ir.update_column('is_active', false) if ir.is_active?
-
-      # Set canceled_at date
-      ir.update_column('canceled_at', timestamp) if ir.canceled_at.blank?
-    end
-  end
+  # # Removed # #
 
   # Total reach
   # Sum of followers_count of a user's followers
@@ -352,10 +237,33 @@ class User < ActiveRecord::Base
     delay.retrieve_friendships(twitter_id)
   end
 
-  def self.retrieve_followerships(twitter_id)
-    # Set timestamp on user record
+  def self.retrieve_followerships(twitter_id, opts = {})
+    # Set cursor default
+    # # Twitter API: Cursor == -1 identifies first page in pagination
+     opts.reverse_merge!({
+        cursor: -1
+      })
+
+    # Find user
     user = User.find_by_twitter_id(twitter_id)
-    user.update_column('')
+
+    # Set followerships_update_started_at timestamp
+    # if the first page is going to be retrieved
+    if opts.cursor == -1
+      user.update_column(:followerships_update_started_at, Time.now.utc)
+    end
+
+    # Request follower ids
+    begin
+      res = Twitter.follower_ids(twitter_id, cursor: opts[:cursor])
+    rescue Twitter::Error::NotFound
+      return
+    end
+
+    # Update the last_active_at timestamp on retrieved relationships
+    #
+    followerships = user.followerships.where(user_id: res.ids)
+    followerships.each { |f| f.update_column(:last_active_at, Time.now.utc)}
   end
 
   ##
