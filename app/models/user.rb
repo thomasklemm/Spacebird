@@ -218,6 +218,7 @@ class User < ActiveRecord::Base
     user.subscriber = true
 
     # Initialize user
+    # (delay)
     delay.initialize_subscriber_user(user.twitter_id)
 
     # Save user instance
@@ -230,10 +231,12 @@ class User < ActiveRecord::Base
 
     # Retrieve followerships
     # and followers
+    # (delay)
     delay.retrieve_followerships(twitter_id)
 
     # Retrieve friendships
     # and friends
+    # (delay)
     delay.retrieve_friendships(twitter_id)
     return
   end
@@ -250,13 +253,13 @@ class User < ActiveRecord::Base
 
     # Set followerships_update_started_at timestamp
     # if the first page is going to be retrieved
-    if opts.cursor == -1
+    if opts[:cursor] == -1
       user.update_column(:followerships_update_started_at, Time.now.utc)
     end
 
     # Request follower ids
     begin
-       result = Twitter.follower_ids(twitter_id, cursor: opts[:cursor]).ids
+       result = Twitter.follower_ids(twitter_id, cursor: opts[:cursor])
        follower_twitter_ids = result.ids
     rescue Twitter::Error::NotFound
       return
@@ -264,15 +267,16 @@ class User < ActiveRecord::Base
 
     # Update the last_active_at timestamp on retrieved relationships
     # (use friend_id in friendship case here)
-    followerships = user.followerships.where(user_id: follower_twitter_ids)
-    followerships.each do |followership|
+    followerships = user.followerships.where(user_twitter_id: follower_twitter_ids)
+    followerships.each do |f|
       # REVIEW: Maybe an update_all is possible? (1 - 100 SQL calls could replace up to 5000)
-      followership.update_column(:last_active_at, Time.now.utc)
+      f.update_column(:last_active_at, Time.now.utc)
     end
 
     # Load next page asyncronously (delayed)
     # if there is any
     if result.next_cursor != 0
+      # (delay)
       delay.retrieve_followerships(twitter_id, cursor: result.next_cursor)
     end
 
@@ -282,24 +286,31 @@ class User < ActiveRecord::Base
     current_follower_ids = followerships.map(&:user_twitter_id)
 
     follower_twitter_ids.each do |follower_twitter_id|
-      unless current_followers_ids.include?(follower_twitter_id)
+      unless current_follower_ids.include?(follower_twitter_id)
         # Find or create follower
         follower = User.find_or_create_by_twitter_id(follower_twitter_id)
 
         # Add followership
-        user.followers << follower
+        user.followerships.create do |f|
+          # The follower is the user in this case...
+          f.user_id           = follower.id
+          f.user_twitter_id   = follower.twitter_id
 
-        # FIXME: This might lead to race condition; create followership instead and set flag when creating it
-        # Set first_active_at timestamp on followership
-        followership = user.followerships.where(user_id: follower_twitter_id)
-        followership.update_column(:first_active_at, Time.now.utc)
+          # ... who is a friend of the current user
+          f.friend_id         = user.id
+          f.friend_twitter_id = user.twitter_id
+
+          # Set first_active_at timestamp
+          f.first_active_at   = Time.now.utc
+        end
       end
     end
 
     # Flag inactive followerships
     # which includes setting the user's followerships_update_finished_at flag when finished
     if result.next_cursor == 0
-      delay.flag_outdated_followerships(twitter_id)
+      # (delay)
+      flag_outdated_followerships(twitter_id)
     end
     return
   end
@@ -312,7 +323,7 @@ class User < ActiveRecord::Base
     timestamp = user.followerships_update_started_at
 
     # Find outdated followerships
-    outdated_followerships = user.followerships.where('last_active_at < ?', timestamp)
+    outdated_followerships = user.followerships.where("last_active_at < ?", timestamp)
 
     # Set is_active flag of outdated followerships to false
     outdated_followerships.each do |followership|
@@ -321,6 +332,12 @@ class User < ActiveRecord::Base
 
     # Set follwerships_update_finished_at flag on user
     user.update_column(:followerships_update_finished_at, Time.now.utc)
+  end
+
+  ##
+  # Friendships
+  def self.retrieve_friendships(twitter_id)
+    true
   end
 
   ##

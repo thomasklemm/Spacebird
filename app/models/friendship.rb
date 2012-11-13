@@ -26,6 +26,14 @@ class Friendship < ActiveRecord::Base
               counter_cache: false
 
   ##
+  # Validations
+  validates :user_id,
+            :friend_id,
+            :user_twitter_id,
+            :friend_twitter_id,
+            presence: true
+
+  ##
   # Field defaults
   def is_active
     self[:is_active] || true

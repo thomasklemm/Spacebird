@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Knight::Application.routes.draw do
   # Devise authentication for subscribers
   devise_for  :subscribers,
@@ -8,11 +10,8 @@ Knight::Application.routes.draw do
   end
 
   # Sidekiq Web Interface
-  # TODO: Authentication
-  # require 'sidekiq/web'
-  # constraints admin_constraint do
-  #   mount Sidekiq::Web, at: '/admin/sidekiq', as: :sidekiq
-  # end
+  # FIXME: The Sidekiq Interface needs authentication
+  mount Sidekiq::Web, at: '/sidekiq', as: :sidekiq
 
   # Static Pages
   match '/:id' => 'high_voltage/pages#show', as: :static, via: :get
