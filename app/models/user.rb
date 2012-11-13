@@ -2,19 +2,22 @@
 #
 # Table name: users
 #
-#  id                       :integer          not null, primary key
-#  twitter_id               :integer          not null
-#  screen_name              :string(255)
-#  friends_counter          :integer          default(0)
-#  followers_counter        :integer          default(0)
-#  verified                 :boolean          default(FALSE)
-#  profile_image_url        :string(255)
-#  name                     :string(255)
-#  description              :string(255)
-#  friendships_updated_at   :datetime
-#  followerships_updated_at :datetime
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
+#  id                               :integer          not null, primary key
+#  twitter_id                       :integer          not null
+#  screen_name                      :string(255)
+#  friends_counter                  :integer          default(0)
+#  followers_counter                :integer          default(0)
+#  verified                         :boolean          default(FALSE)
+#  profile_image_url                :string(255)
+#  name                             :string(255)
+#  description                      :string(255)
+#  friendships_update_started_at    :datetime
+#  friendships_update_finished_at   :datetime
+#  followerships_update_started_at  :datetime
+#  followerships_update_finished_at :datetime
+#  created_at                       :datetime         not null
+#  updated_at                       :datetime         not null
+#  subscriber                       :boolean          default(FALSE)
 #
 
 class User < ActiveRecord::Base
@@ -328,7 +331,31 @@ class User < ActiveRecord::Base
 
     # Set 'subscriber' flag
     user.subscriber = true
+
+    # Initialize user
+    delay.initialize_subscriber_user(user.twitter_id)
+
+    # Save user instance
     user.save
+  end
+
+  def self.initialize_subscriber_user(twitter_id)
+    # Ensure that user exists
+    User.find_or_create_by_twitter_id(twitter_id)
+
+    # Retrieve followerships
+    # and followers
+    delay.retrieve_followerships(twitter_id)
+
+    # Retrieve friendships
+    # and friends
+    delay.retrieve_friendships(twitter_id)
+  end
+
+  def self.retrieve_followerships(twitter_id)
+    # Set timestamp on user record
+    user = User.find_by_twitter_id(twitter_id)
+    user.update_column('')
   end
 
   ##

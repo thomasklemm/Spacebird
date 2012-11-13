@@ -24,8 +24,11 @@ class CreateUsers < ActiveRecord::Migration
       t.string :description
 
       # Times of updates of associations
-      t.datetime :friendships_updated_at
-      t.datetime :followerships_updated_at
+      t.datetime :friendships_update_started_at
+      t.datetime :friendships_update_finished_at
+
+      t.datetime :followerships_update_started_at
+      t.datetime :followerships_update_finished_at
 
       t.timestamps
     end

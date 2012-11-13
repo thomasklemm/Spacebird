@@ -68,19 +68,21 @@ ActiveRecord::Schema.define(:version => 20121113114229) do
   add_index "tokens", ["twitter_id"], :name => "index_tokens_on_twitter_id"
 
   create_table "users", :force => true do |t|
-    t.integer  "twitter_id",                                  :null => false
+    t.integer  "twitter_id",                                          :null => false
     t.string   "screen_name"
-    t.integer  "friends_counter",          :default => 0
-    t.integer  "followers_counter",        :default => 0
-    t.boolean  "verified",                 :default => false
+    t.integer  "friends_counter",                  :default => 0
+    t.integer  "followers_counter",                :default => 0
+    t.boolean  "verified",                         :default => false
     t.string   "profile_image_url"
     t.string   "name"
     t.string   "description"
-    t.datetime "friendships_updated_at"
-    t.datetime "followerships_updated_at"
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
-    t.boolean  "subscriber",               :default => false
+    t.datetime "friendships_update_started_at"
+    t.datetime "friendships_update_finished_at"
+    t.datetime "followerships_update_started_at"
+    t.datetime "followerships_update_finished_at"
+    t.datetime "created_at",                                          :null => false
+    t.datetime "updated_at",                                          :null => false
+    t.boolean  "subscriber",                       :default => false
   end
 
   add_index "users", ["screen_name"], :name => "index_users_on_screen_name", :unique => true
