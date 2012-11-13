@@ -90,6 +90,7 @@ class Subscriber < ActiveRecord::Base
       s.username   = omniauth.info.nickname
       s.name       = omniauth.info.name
       s.image_url  = omniauth.info.image
+      s.twitter_id = omniauth.extra.raw_info.id.to_i
     end
 
     # Create authentication

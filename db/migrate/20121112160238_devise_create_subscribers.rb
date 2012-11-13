@@ -5,6 +5,7 @@ class DeviseCreateSubscribers < ActiveRecord::Migration
       t.string :username, null: :false
       t.string :name
       t.string :image_url
+      t.integer :twitter_id
 
       ## Rememberable
       t.string   :remember_token

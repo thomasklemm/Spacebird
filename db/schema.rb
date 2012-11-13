@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(:version => 20121113114229) do
     t.string   "username"
     t.string   "name"
     t.string   "image_url"
+    t.integer  "twitter_id"
     t.string   "remember_token"
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",       :default => 0

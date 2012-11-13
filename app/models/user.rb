@@ -241,6 +241,7 @@ class User < ActiveRecord::Base
     return
   end
 
+  # Retrieve followerships
   def self.retrieve_followerships(twitter_id, opts = {})
     # Set cursor default
     # # Twitter API: Cursor == -1 identifies first page in pagination
