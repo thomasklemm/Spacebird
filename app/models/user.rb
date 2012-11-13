@@ -27,11 +27,13 @@ class User < ActiveRecord::Base
   #   2) Validations
   #   3) Associations (friends, followers)
   #   4) Friendship predicates
-  #   5) Good friends
-  #   6) Shared friends and followers
-  #   7) Friendship instance methods of user
-  #   8) User instance methods
-  #   9) Mass-assignment whitelist
+  #   5) Shared friends and followers
+  #   6) User instance methods
+  #   7) User class methods
+  #   8) Followerships
+  #   9) Friendships
+  #   10) Experimental
+  #   11) Mass-assignment whitelist
 
   ##
   # 1) Field defaults
@@ -144,26 +146,7 @@ class User < ActiveRecord::Base
   end
 
   ##
-  # # Removed # #
-
-  # Total reach
-  # Sum of followers_count of a user's followers
-  # regardless of uniqueness
-  def total_reach
-    @reach ||= User.where(twitter_id: followers_twitter_ids).select(:followers_counter).map(&:followers_counter).sum
-  end
-
-  # prerequisite: followers of each of my followers have to be requested first
-  def total_unique_reach
-    @unique_reach ||= begin
-      ids = []
-      followers.each { |follower| ids << follower.followers.select(:twitter_id).map(&:twitter_id) }
-      uniques = ids.flatten.uniq.length
-    end
-  end
-
-  ##
-  # 7) User instance methods
+  # 6) User instance methods
 
   # User attribute map
   # Which user attribute is associated
@@ -199,7 +182,7 @@ class User < ActiveRecord::Base
   end
 
   ##
-  # Class Methods
+  # 7) User Class Methods
 
   # Create or update from omniauth
   # Create user from omniauth if he registers as a subscriber
@@ -225,6 +208,7 @@ class User < ActiveRecord::Base
     user.save
   end
 
+  # Initialize subscriber as a user
   def self.initialize_subscriber_user(twitter_id)
     # Ensure that user exists
     User.find_or_create_by_twitter_id(twitter_id)
@@ -239,6 +223,9 @@ class User < ActiveRecord::Base
     return
   end
 
+  ##
+  # 8) Followerships
+  #
   # Retrieve followerships
   def self.retrieve_followerships(twitter_id, opts = {})
     # Set cursor default
@@ -334,7 +321,7 @@ class User < ActiveRecord::Base
   end
 
   ##
-  # Friendships
+  # 9) Friendships
   #
   # Retrieve friendships
   def self.retrieve_friendships(twitter_id, opts = {})
@@ -431,7 +418,26 @@ class User < ActiveRecord::Base
   end
 
   ##
-  # 8) Mass-assignment whitelisting
+  # 10) Experimental
+
+  # Total reach
+  # Sum of followers_count of a user's followers
+  # regardless of uniqueness
+  def total_reach
+    @reach ||= User.where(twitter_id: followers_twitter_ids).select(:followers_counter).map(&:followers_counter).sum
+  end
+
+  # prerequisite: followers of each of my followers have to be requested first
+  def total_unique_reach
+    @unique_reach ||= begin
+      ids = []
+      followers.each { |follower| ids << follower.followers.select(:twitter_id).map(&:twitter_id) }
+      uniques = ids.flatten.uniq.length
+    end
+  end
+
+  ##
+  # 11) Mass-assignment whitelisting
   attr_accessible :twitter_id,
                   :screen_name,
                   :name,
