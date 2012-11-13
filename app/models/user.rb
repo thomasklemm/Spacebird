@@ -15,6 +15,7 @@
 #  friendships_update_finished_at   :datetime
 #  followerships_update_started_at  :datetime
 #  followerships_update_finished_at :datetime
+#  updated_from_twitter_at          :datetime
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
 #  subscriber                       :boolean          default(FALSE)
@@ -179,6 +180,26 @@ class User < ActiveRecord::Base
   # from suitable twitter user instance
   def map_and_set_user_attributes(twitter_user)
     USER_ATTRIBUTES.each { |key, twitter_key| self.send("#{ key }=", twitter_user[twitter_key]) }
+  end
+
+  def self.retrieve_users(*twitter_ids)
+    # Get users from Twitter
+    twitter_users = Twitter.users(twitter_ids)
+
+    # Iterate over twitter_users
+    twitter_users.each do |twitter_user|
+      # Find or create user
+      user = User.find_or_create_by_twitter_id(twitter_user.id)
+
+      # Map and set user attributes
+      user.map_and_set_user_attributes(twitter_user)
+
+      # Set updated_from_twitter_at timestamp
+      user.updated_from_twitter_at = Time.now.utc
+
+      # Save user
+      user.save
+    end
   end
 
   ##

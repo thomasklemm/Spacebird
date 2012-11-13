@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(:version => 20121113114229) do
     t.datetime "friendships_update_finished_at"
     t.datetime "followerships_update_started_at"
     t.datetime "followerships_update_finished_at"
+    t.datetime "updated_from_twitter_at"
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
     t.boolean  "subscriber",                       :default => false

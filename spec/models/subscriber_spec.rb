@@ -6,6 +6,7 @@
 #  username            :string(255)
 #  name                :string(255)
 #  image_url           :string(255)
+#  twitter_id          :integer
 #  remember_token      :string(255)
 #  remember_created_at :datetime
 #  sign_in_count       :integer          default(0)

@@ -30,6 +30,9 @@ class CreateUsers < ActiveRecord::Migration
       t.datetime :followerships_update_started_at
       t.datetime :followerships_update_finished_at
 
+      # Further timestamps
+      t.datetime :updated_from_twitter_at
+
       t.timestamps
     end
     add_index :users, :twitter_id, unique: true

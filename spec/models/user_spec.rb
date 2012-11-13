@@ -15,6 +15,7 @@
 #  friendships_update_finished_at   :datetime
 #  followerships_update_started_at  :datetime
 #  followerships_update_finished_at :datetime
+#  updated_from_twitter_at          :datetime
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
 #  subscriber                       :boolean          default(FALSE)
