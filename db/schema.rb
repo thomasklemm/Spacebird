@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121113095519) do
+ActiveRecord::Schema.define(:version => 20121113114229) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "subscriber_id"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20121113095519) do
     t.datetime "followerships_updated_at"
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.boolean  "subscriber",               :default => false
   end
 
   add_index "users", ["screen_name"], :name => "index_users_on_screen_name", :unique => true

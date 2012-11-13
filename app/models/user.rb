@@ -320,12 +320,15 @@ class User < ActiveRecord::Base
     # Extract user info from omniauth
     twitter_user = omniauth.extra.raw_info
 
+    # Find or create user
     user = User.find_or_create_by_twitter_id(twitter_user.id.to_i)
 
+    # Map and set user attributes
     user.map_and_set_user_attributes(twitter_user)
 
-    user.save
     # Set 'subscriber' flag
+    user.subscriber = true
+    user.save
   end
 
   ##
