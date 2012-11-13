@@ -183,6 +183,18 @@ class User < ActiveRecord::Base
   end
 
   def self.retrieve_users(*twitter_ids)
+    # Slice off the first batch of 100 twitter_ids
+    batch = twitter_ids.shift(100)
+
+    # Perform user retrieval for this batch
+    # (delay)
+    delay.perform_user_lookups(batch)
+
+    # Rinse, repeat if there are still twitter_ids present
+    retrieve_users(twitter_ids) if twitter_ids.present?
+  end
+
+  def self.perform_user_lookups(*twitter_ids)
     # Get users from Twitter
     twitter_users = Twitter.users(twitter_ids)
 
@@ -352,6 +364,9 @@ class User < ActiveRecord::Base
         cursor: -1
       })
 
+    # Array that new user twitter_ids will be pushed to
+    new_user_twitter_ids = []
+
     # Find user
     user = User.find_by_twitter_id(twitter_id)
 
@@ -392,7 +407,16 @@ class User < ActiveRecord::Base
     friend_twitter_ids.each do |friend_twitter_id|
       unless current_friend_ids.include?(friend_twitter_id)
         # Find or create friend
-        friend = User.find_or_create_by_twitter_id(friend_twitter_id)
+        friend = User.find_or_initialize_by_twitter_id(friend_twitter_id)
+
+        # Add friend_twitter_id to new_user_twitter_ids array
+        if friend.new_record?
+          new_user_twitter_ids << friend_twitter_id
+
+          # Save record
+          # so that 'id' is issued
+          friend.save
+        end
 
         # Add friendship
         user.friendships.create do |f|
@@ -416,6 +440,11 @@ class User < ActiveRecord::Base
       # (delay)
       delay.flag_outdated_friendships(twitter_id)
     end
+
+    # Retrieve users that are new
+    # (delay here might cause the argument to be up to 5000 twitter_ids)
+    retrieve_users(new_user_twitter_ids)
+
     return
   end
 
