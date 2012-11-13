@@ -168,12 +168,19 @@ class User < ActiveRecord::Base
   # Map and set attributes
   # and save user instance
   def retrieve_user
+    delay.perform_user_request(twitter_id)
+  end
+
+  #
+  def self.perform_user_request(twitter_id)
+    # Find user
+    user = User.find_by_twitter_id(twitter_id)
     # Retrieve user from twitter
     twitter_user = Twitter.user(twitter_id)
     # Set attributes
-    map_and_set_user_attributes(twitter_user)
+    user.map_and_set_user_attributes(twitter_user)
     # Save user instance
-    self.save
+    user.save
   end
 
   # Map and set user attributes
@@ -267,6 +274,9 @@ class User < ActiveRecord::Base
         cursor: -1
       })
 
+    # Array that new user twitter_ids will be pushed to
+    new_user_twitter_ids = []
+
     # Find user
     user = User.find_by_twitter_id(twitter_id)
 
@@ -307,7 +317,16 @@ class User < ActiveRecord::Base
     follower_twitter_ids.each do |follower_twitter_id|
       unless current_follower_ids.include?(follower_twitter_id)
         # Find or create follower
-        follower = User.find_or_create_by_twitter_id(follower_twitter_id)
+        follower = User.find_or_initialize_by_twitter_id(follower_twitter_id)
+
+        # Add friend_twitter_id to new_user_twitter_ids array
+        if follower.new_record?
+          new_user_twitter_ids << follower_twitter_id
+
+          # Save record
+          # so that 'id' is issued
+          follower.save
+        end
 
         # Add followership
         user.followerships.create do |f|
@@ -331,6 +350,11 @@ class User < ActiveRecord::Base
       # (delay)
       delay.flag_outdated_followerships(twitter_id)
     end
+
+    # Retrieve users that are new
+    # (splitted up in batches of 1000 in retrieve_users, and delayed there)
+    # (do not delay, argument size up to 5000 twitter_ids)
+    retrieve_users(new_user_twitter_ids)
     return
   end
 
@@ -442,9 +466,9 @@ class User < ActiveRecord::Base
     end
 
     # Retrieve users that are new
-    # (delay here might cause the argument to be up to 5000 twitter_ids)
+    # (splitted up in batches of 1000 in retrieve_users, and delayed there)
+    # (do not delay, argument size up to 5000 twitter_ids)
     retrieve_users(new_user_twitter_ids)
-
     return
   end
 
