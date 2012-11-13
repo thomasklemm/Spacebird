@@ -311,6 +311,24 @@ class User < ActiveRecord::Base
   end
 
   ##
+  # Class Methods
+
+  # Create or update from omniauth
+  # Create user from omniauth if he registers as a subscriber
+  # or update the record if it is already known
+  def self.create_or_update_from_omniauth(omniauth)
+    # Extract user info from omniauth
+    twitter_user = omniauth.extra.raw_info
+
+    user = User.find_or_create_by_twitter_id(twitter_user.id.to_i)
+
+    user.map_and_set_user_attributes(twitter_user)
+
+    user.save
+    # Set 'subscriber' flag
+  end
+
+  ##
   # 8) Mass-assignment whitelisting
   attr_accessible :twitter_id,
                   :screen_name,
