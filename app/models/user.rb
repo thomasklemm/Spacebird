@@ -229,13 +229,11 @@ class User < ActiveRecord::Base
     # Ensure that user exists
     User.find_or_create_by_twitter_id(twitter_id)
 
-    # Retrieve followerships
-    # and followers
+    # Retrieve followerships and followers
     # (delay)
     delay.retrieve_followerships(twitter_id)
 
-    # Retrieve friendships
-    # and friends
+    # Retrieve friendships and friends
     # (delay)
     delay.retrieve_friendships(twitter_id)
     return
@@ -311,7 +309,7 @@ class User < ActiveRecord::Base
     # which includes setting the user's followerships_update_finished_at flag when finished
     if result.next_cursor == 0
       # (delay)
-      flag_outdated_followerships(twitter_id)
+      delay.flag_outdated_followerships(twitter_id)
     end
     return
   end
@@ -337,8 +335,99 @@ class User < ActiveRecord::Base
 
   ##
   # Friendships
-  def self.retrieve_friendships(twitter_id)
-    true
+  #
+  # Retrieve friendships
+  def self.retrieve_friendships(twitter_id, opts = {})
+    # Set cursor default
+    # # Twitter API: Cursor == -1 identifies first page in pagination
+    opts.reverse_merge!({
+        cursor: -1
+      })
+
+    # Find user
+    user = User.find_by_twitter_id(twitter_id)
+
+    # Set friendships_update_started_at timestamp
+    # if the first page is going to be retrieved
+    if opts[:cursor] == -1
+      user.update_column(:friendships_update_started_at, Time.now.utc)
+    end
+
+    # Request friend ids
+    begin
+       result = Twitter.friend_ids(twitter_id, cursor: opts[:cursor])
+       friend_twitter_ids = result.ids
+    rescue Twitter::Error::NotFound
+      return
+    end
+
+    # Update the last_active_at timestamp on retrieved relationships
+    # (use friend_id in friendship case here)
+    friendships = user.friendships.where(friend_twitter_id: friend_twitter_ids)
+    friendships.each do |f|
+      # REVIEW: Maybe an update_all is possible? (1 - 100 SQL calls could replace up to 5000)
+      f.update_column(:last_active_at, Time.now.utc)
+    end
+
+    # Load next page asyncronously (delayed)
+    # if there is any
+    if result.next_cursor != 0
+      # (delay)
+      delay.retrieve_friendships(twitter_id, cursor: result.next_cursor)
+    end
+
+    # Create or find friend
+    # and add friendship
+    # if not already present
+    current_friend_ids = friendships.map(&:friend_twitter_id)
+
+    friend_twitter_ids.each do |friend_twitter_id|
+      unless current_friend_ids.include?(friend_twitter_id)
+        # Find or create friend
+        friend = User.find_or_create_by_twitter_id(friend_twitter_id)
+
+        # Add friendship
+        user.friendships.create do |f|
+          # The user is the user in this case...
+          f.user_id           = user.id
+          f.user_twitter_id   = user.twitter_id
+
+          # ... who has the friend as a friend
+          f.friend_id         = friend.id
+          f.friend_twitter_id = friend.twitter_id
+
+          # Set first_active_at timestamp
+          f.first_active_at   = Time.now.utc
+        end
+      end
+    end
+
+    # Flag inactive friendships
+    # which includes setting the user's friendships_update_finished_at flag when finished
+    if result.next_cursor == 0
+      # (delay)
+      delay.flag_outdated_friendships(twitter_id)
+    end
+    return
+  end
+
+  # Flag outdated relationships
+  # by setting their is_active flag to false
+  def self.flag_outdated_friendships(twitter_id)
+    # friendships_update_started_at timestamp
+    user      = User.find_by_twitter_id(twitter_id)
+    timestamp = user.friendships_update_started_at
+
+    # Find outdated friendships
+    outdated_friendships = user.friendships.where("last_active_at < ?", timestamp)
+
+    # Set is_active flag of outdated friendships to false
+    outdated_friendships.each do |friendship|
+      friendship.update_column(:is_active, false)
+    end
+
+    # Set follwerships_update_finished_at flag on user
+    user.update_column(:friendships_update_finished_at, Time.now.utc)
   end
 
   ##
