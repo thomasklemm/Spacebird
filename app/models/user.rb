@@ -176,7 +176,7 @@ class User < ActiveRecord::Base
     # Find user
     user = User.find_by_twitter_id(twitter_id)
     # Retrieve user from twitter
-    twitter_user = Twitter.user(twitter_id)
+    twitter_user = TwitterClient.random.user(twitter_id)
     # Set attributes
     user.map_and_set_user_attributes(twitter_user)
     # Save user instance
@@ -203,7 +203,7 @@ class User < ActiveRecord::Base
 
   def self.perform_user_lookups(*twitter_ids)
     # Get users from Twitter
-    twitter_users = Twitter.users(twitter_ids)
+    twitter_users = TwitterClient.random.users(twitter_ids)
 
     # Iterate over twitter_users
     twitter_users.each do |twitter_user|
@@ -288,7 +288,7 @@ class User < ActiveRecord::Base
 
     # Request follower ids
     begin
-       result = Twitter.follower_ids(twitter_id, cursor: opts[:cursor])
+       result = TwitterClient.random.follower_ids(twitter_id, cursor: opts[:cursor])
        follower_twitter_ids = result.ids
     rescue Twitter::Error::NotFound
       return
@@ -402,7 +402,7 @@ class User < ActiveRecord::Base
 
     # Request friend ids
     begin
-       result = Twitter.friend_ids(twitter_id, cursor: opts[:cursor])
+       result = TwitterClient.random.friend_ids(twitter_id, cursor: opts[:cursor])
        friend_twitter_ids = result.ids
     rescue Twitter::Error::NotFound
       return
