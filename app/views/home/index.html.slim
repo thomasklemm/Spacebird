@@ -1,0 +1,99 @@
+/! Topbar
+= render 'topbar'
+/! Topbar ends
+
+/! Sidebar begins
+#sidebar
+  /! Main nav
+  = render 'main_nav'
+
+  /! Secondary nav
+  = render 'secondary_nav'
+/! Sidebar ends
+
+/! Content begins
+#content
+  .contentTop
+    span.pageTitle
+      span.icon-screen
+      | Dashboard
+    ul.quickStats
+      li
+        a.blueImg href=""
+          img alt="" src="images/icons/quickstats/plus.png"
+        .floatR
+          strong.blue 5489
+          span visits
+      li
+        a.redImg href=""
+          img alt="" src="images/icons/quickstats/user.png"
+        .floatR
+          strong.blue 4658
+          span users
+      li
+        a.greenImg href=""
+          img alt="" src="images/icons/quickstats/money.png"
+        .floatR
+          strong.blue 1289
+          span orders
+    .clear
+
+  /! Breadcrumbs line
+  .breadLine
+    .bc
+      ul#breadcrumbs.breadcrumbs
+        li
+          a href="#"
+        li
+          a href="#"
+          ul
+            li
+              a href="#" title=""
+            li
+              a href="#" title=""
+            li
+              a href="#" title=""
+            li
+              a href="#" title=""
+            li
+              a href="#" title=""
+        li.current
+          a href="#" title=""
+    .breadLinks
+      ul
+        li
+          a href="#" title=""
+            i.icos-list
+            span Orders
+            strong (+58)
+        li
+          a href="#" title=""
+            i.icos-check
+            span Tasks
+            strong (+12)
+        li.has
+          a title=""
+            i.icos-money3
+            span Invoices
+            span
+              img alt="" src="images/elements/control/hasddArrow.png"
+          ul
+            li
+              a href="#" title=""
+                span.icos-add
+                | New invoice
+            li
+              a href="#" title=""
+                span.icos-archive
+                | History
+            li
+              a href="#" title=""
+                span.icos-printer
+                | Print invoices
+      .clear
+
+  /! Main content
+  .wrapper
+  /! Main content end
+  s
+/! Content ends

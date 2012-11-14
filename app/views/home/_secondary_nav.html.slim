@@ -1,0 +1,254 @@
+/! Secondary nav
+.secNav
+  .secWrapper
+    .secTop
+      .balance
+        .balInfo
+          | Followers
+          span Apr 21 2012
+        .balAmount
+          span.balBars
+            /! 5,10,15,20,18,16,14,1000,1000,1000,1200,1000
+          span 1,990
+      a.triangle-red href="#"
+    .secTop
+      .balance
+        .balInfo
+          | Friends
+          span Apr 21 2012
+        .balAmount
+          span.balBars
+            /! 5,10,15,20,18,16,14,1000,1000,1000,1200,1000
+          span 1,990
+    /! Tabs container
+    #tab-container.tab-container
+      ul.iconsLine.ic3.etabs
+        li
+          a href="#general" title=""
+            span.icos-fullscreen
+        li
+          a href="#alt1" title=""
+            span.icos-user
+        li
+          a href="#alt2" title=""
+            span.icos-archive
+      .divider
+        span
+      #general
+        /! Sidebar big buttons
+        .sidePad
+          a.sideB.bLightBlue href="#" title=""
+        .divider
+          span
+        /! Sidebar file uploads widget
+        .sideUpload
+          .dropFiles
+          ul.filesDown
+            li.currentFile
+              .fileProcess
+                img.loader alt="" src="images/elements/loaders/10s.gif"
+                strong Homepage_widgets_102.psd
+                .fileProgress
+                  span 9.1 of 17MB
+                  | \-
+                  span 243KB/sec
+                  | \-
+                  span 1 min
+                .contentProgress
+                  #bar10.barG.tipN title="61%"
+            li
+              span.fileSuccess>
+              | About_Us_08956.psd
+              span.remove
+            li
+              span.fileSuccess>
+              | Our_services_02811.psd
+              span.remove
+            li
+              span.fileError>
+              | Homepage_Alt_032811.psd
+              span.remove
+            li
+              span.fileQueue>
+              | Homepage_Alt_032811.psd
+              span.remove
+            li
+              span.fileQueue>
+              | Homepage_Alt_032811.psd
+              span.remove
+        .divider
+          span
+        /! Sidebar chart
+        .sideChart
+          #placeholder1_hS.barsS
+      #alt1
+        /! Sidebar chart
+        .numStats
+          ul
+            li
+              a href="#" title=""
+              span visitors
+            li
+              a href="#" title=""
+              span orders
+            li.last
+              a href="#" title=""
+              span reviews
+          .clear
+        .divider
+          span
+        /! Sidebar user list
+        ul.userList
+          li
+            a href="#" title=""
+              img alt="" src="images/live/face1.png"
+              span.contactName
+                strong
+                  | Eugene Kopyov
+                  span (5)
+                i web & ui designer
+              span.status_away
+              span.clear
+          li
+            a href="#" title=""
+              img alt="" src="images/live/face2.png"
+              span.contactName
+                strong
+                  | Lucy Wilkinson
+                  span (12)
+                i Team leader
+              span.status_off
+              span.clear
+          li
+            a href="#" title=""
+              img alt="" src="images/live/face3.png"
+              span.contactName
+                strong John Dow
+                i PHP developer
+              span.status_available
+              span.clear
+        .divider
+          span
+        /! Sidebar progress bars
+        .sideWidget
+          .contentProgress
+            #bar1.barGr.tipS title="15%"
+          .contentProgress.mt8
+            #bar2.barB.tipS title="30%"
+          .contentProgress.mt8
+            #bar3.barO.tipS title="45%"
+          .contentProgress.mt8
+            #bar4.barBl.tipS title="60%"
+          .contentProgress.mt8
+            #bar5.barR.tipS title="75%"
+      #alt2
+        /! Sidebar forms
+        .sideWidget
+          .formRow
+            label Usual input field:
+            input name="regular" placeholder="Your name" type="text"
+          .formRow
+            label Usual password field:
+            input name="regular" placeholder="Your password" type="password"
+          .formRow
+            label Single file uploader:
+            input#fileInput.fileInput type="file"
+          .formRow
+            label Dropdown menu:
+            select name="select2"
+              option value="opt1"
+              option value="opt2"
+              option value="opt3"
+              option value="opt4"
+              option value="opt5"
+              option value="opt6"
+              option value="opt7"
+              option value="opt8"
+          .formRow.searchDrop
+            label Dropdown with search:
+            select.select data-placeholder="Choose a Country..." tabindex="2"
+              option value=""
+              option value="Cambodia"
+              option value="Cameroon"
+              option value="Canada"
+              option value="Cape Verde"
+              option value="Cayman Islands"
+              option value="Central African Republic"
+              option value="Chad"
+              option value="Chile"
+              option value="China"
+              option value="Christmas Island"
+              option value="Cocos (Keeling) Islands"
+              option value="Colombia"
+              option value="Comoros"
+              option value="Congo"
+              option value="Congo, The Democratic Republic of The"
+              option value="Cook Islands"
+              option value="Costa Rica"
+              option value="Cote D'ivoire"
+              option value="Croatia"
+              option value="Cuba"
+              option value="Cyprus"
+              option value="Czech Republic"
+              option value="Denmark"
+              option value="Djibouti"
+              option value="Dominica"
+              option value="Dominican Republic"
+              option value="Ecuador"
+              option value="Egypt"
+              option value="El Salvador"
+              option value="Equatorial Guinea"
+              option value="Eritrea"
+              option value="Estonia"
+              option value="Ethiopia"
+              option value="Falkland Islands (Malvinas)"
+              option value="Faroe Islands"
+              option value="Fiji"
+              option value="Finland"
+              option value="France"
+              option value="French Guiana"
+              option value="French Polynesia"
+              option value="French Southern Territories"
+              option value="Gabon"
+              option value="Gambia"
+              option value="Georgia"
+              option value="Germany"
+              option value="Ghana"
+              option value="Gibraltar"
+              option value="Greece"
+          .formRow
+            input#check2.check checked="checked" name="chbox1" type="checkbox"
+            label.nopadding for="check2"
+            .clear
+          .formRow
+            input#radio1 checked="checked" name="question1" type="radio"
+            label.nopadding for="radio1"
+            .clear
+          .formRow
+            label Usual textarea:
+            textarea cols="" name="textarea" placeholder="Your message" rows="8"
+          .formRow
+            input.buttonS.bLightBlue type="submit" value="Submit button"
+    .divider
+      span
+    /! Sidebar datepicker
+    .sideWidget
+      .inlinedate
+    .divider
+      span
+    /! Sidebar tags line
+    .formRow
+      input#tags.tags name="tags" type="text" value="these,are,sample,tags"
+    .divider
+      span
+    /! Sidebar buttons
+    .fluid.sideWidget
+      .grid6
+        input.buttonS.bRed type="submit" value="Cancel"
+      .grid6
+        input.buttonS.bGreen type="submit" value="Submit"
+    .divider
+      span
+  .clear
+
+/! Secondary nav ends
