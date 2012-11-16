@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
 
   # Truncate description
   def description=(new_description)
-    self[:description] = new_description.squeeze.strip.slice(0, 250)
+    self[:description] = new_description.strip.squeeze(" ").slice(0, 250)
   end
 
   ##

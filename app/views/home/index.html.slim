@@ -8,15 +8,16 @@
   = render 'main_nav'
 
   /! Secondary nav
-  = render 'secondary_nav'
+  / = render 'secondary_nav'
 /! Sidebar ends
 
 /! Content begins
 #content
   .contentTop
     span.pageTitle
-      span.icon-screen
+      i.icon-star style='line-height: 16px'
       | Dashboard
+
     ul.quickStats
       li
         a.blueImg href=""
@@ -43,57 +44,84 @@
     .bc
       ul#breadcrumbs.breadcrumbs
         li
-          a href="#"
+          a href="#" Test
         li
-          a href="#"
+          a href="#" Test
           ul
             li
-              a href="#" title=""
+              a href="#" title="" Test
             li
-              a href="#" title=""
+              a href="#" title="" Test
             li
-              a href="#" title=""
+              a href="#" title="" Test
             li
-              a href="#" title=""
+              a href="#" title="" Test
             li
-              a href="#" title=""
+              a href="#" title="" Test
         li.current
-          a href="#" title=""
-    .breadLinks
-      ul
-        li
-          a href="#" title=""
-            i.icos-list
-            span Orders
-            strong (+58)
-        li
-          a href="#" title=""
-            i.icos-check
-            span Tasks
-            strong (+12)
-        li.has
-          a title=""
-            i.icos-money3
-            span Invoices
-            span
-              img alt="" src="images/elements/control/hasddArrow.png"
-          ul
-            li
-              a href="#" title=""
-                span.icos-add
-                | New invoice
-            li
-              a href="#" title=""
-                span.icos-archive
-                | History
-            li
-              a href="#" title=""
-                span.icos-printer
-                | Print invoices
+          a href="#" title="" Test
+
+    / .breadLinks
+    /   ul
+    /     li
+    /       a href="#" title=""
+    /         i.icos-list
+    /         span Orders
+    /         strong (+58)
+    /     li
+    /       a href="#" title=""
+    /         i.icos-check
+    /         span Tasks
+    /         strong (+12)
+    /     li.has
+    /       a title=""
+    /         i.icos-money3
+    /         span Invoices
+    /         span
+    /           img alt="" src="images/elements/control/hasddArrow.png"
+    /       ul
+    /         li
+    /           a href="#" title=""
+    /             span.icos-add
+    /             | New invoice
+    /         li
+    /           a href="#" title=""
+    /             span.icos-archive
+    /             | History
+    /         li
+    /           a href="#" title=""
+    /             span.icos-printer
+    /             | Print invoices
       .clear
 
   /! Main content
   .wrapper
+
+    /! Standard table
+    .widget
+      .whead
+        h6 style='font-size: 15px' New followers
+        .clear
+      table.dTable cellpadding="0" cellspacing="0" border="0" width="100%"
+        thead
+          tr
+            td Name and Login
+            td Description
+            td Followers
+            td Friends
+        tbody
+          - @users.each do |user|
+            tr
+              td width='180px'
+                img src=user.profile_image_url style='float: left; margin-right: 6px'
+                b.name = user.name
+                .login style='color: #999; font-size: 12px !important' = '@' + user.screen_name
+              td = user.description
+              td width='65px' = user.followers_counter
+              td width='50px' = user.friends_counter
+
+
+
+
   /! Main content end
-  s
 /! Content ends
