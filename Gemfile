@@ -52,6 +52,9 @@ gem 'devise'
 # Omniauth (Authentication through Twitter)
 gem 'omniauth-twitter'
 
+# Clockwork (Scheduling jobs)
+gem 'clockwork'
+
 # Production Gems
 group :production do
   # Memcached on Heroku

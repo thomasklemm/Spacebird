@@ -114,7 +114,7 @@
             tr
               td width='180px'
                 img src=user.profile_image_url style='float: left; margin-right: 6px'
-                b.name = user.name
+                b.name = link_to user.name, "https://twitter.com/#{user.screen_name}"
                 .login style='color: #999; font-size: 12px !important' = '@' + user.screen_name
               td = user.description
               td width='65px' = user.followers_counter
