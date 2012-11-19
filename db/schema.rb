@@ -78,10 +78,7 @@ ActiveRecord::Schema.define(:version => 20121113114229) do
     t.boolean  "verified",                         :default => false
     t.string   "profile_image_url"
     t.string   "name"
-    t.string   "description"
-    t.text     "friends_count_history"
-    t.text     "followers_count_history"
-    t.text     "statuses_count_history"
+    t.text     "description"
     t.datetime "friendships_update_started_at"
     t.datetime "friendships_update_finished_at"
     t.datetime "followerships_update_started_at"

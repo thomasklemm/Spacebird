@@ -22,12 +22,7 @@ class CreateUsers < ActiveRecord::Migration
 
       # Twitter name and description
       t.string :name
-      t.string :description
-
-      # Stats history
-      t.text :friends_count_history
-      t.text :followers_count_history
-      t.text :statuses_count_history
+      t.text :description
 
       # Times of updates of associations
       t.datetime :friendships_update_started_at

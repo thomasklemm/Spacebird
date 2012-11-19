@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   #   4) Friendship predicates
   #   5) Shared friends and followers
   #   6) User instance methods
+  #   6a) User history
   #   7) User class methods
   #   8) Experimental
   #   9) Followerships
@@ -53,11 +54,6 @@ class User < ActiveRecord::Base
     self[:followers_counter] || 0
   end
 
-  # Truncate description
-  def description=(new_description)
-    self[:description] = new_description.strip.squeeze(" ").slice(0, 250)
-  end
-
   # Image url
   alias_attribute :image_url, :profile_image_url
 
@@ -74,10 +70,6 @@ class User < ActiveRecord::Base
   #   unique, but may change
   # ALERT: This validation leads to a second SQL query checking for uniqueness
   # validates_uniqueness_of :screen_name, allow_nil: true
-
-  # Description
-  validates :description,
-            length: {maximum: 253}
 
   ##
   # 3) Associations
@@ -195,7 +187,7 @@ class User < ActiveRecord::Base
   end
 
   # Retrieve user instances for twitter_ids in the background
-  def self.retrieve_users(twitter_ids)
+  def self.retrieve_users(*twitter_ids)
     twitter_ids = twitter_ids.to_a.flatten.uniq
 
     # Slice off the first batch of 100 twitter_ids
@@ -212,6 +204,60 @@ class User < ActiveRecord::Base
   ##
   # UserLookupsWorker:
   #   Retrieves users in batches up to 100 from Twitter
+
+  ##
+  # User history
+  has_one :history
+
+
+  def friends_count_daily
+    user_history(:friends_count_history)
+  end
+
+  def followers_count_daily
+    user_history(:followers_count_history)
+  end
+
+  def statuses_count_daily
+    user_history(:statuses_count_history)
+  end
+
+  def user_history(field)
+    start_date = created_at.to_date
+    end_date = Date.current
+    history = []
+
+    date_range = start_date..end_date
+    date_range.each do |date|
+      history << user_history_at_date(field, date, start_date)
+    end
+
+    history
+  end
+
+  def user_history_at_date(field, date, start_date)
+    count = self[field][date]
+    if count.present?
+      return count
+    elsif date == start_date
+      return 0
+    else
+      user_history_at_date(field, date - 1.day)
+    end
+  end
+
+  before_save :set_user_history
+
+  def set_user_history
+    # TWEAK: Ensure that full user object with history columns is loaded!
+    self[:friends_count_history]   ||= {}
+    self[:followers_count_history] ||= {}
+    self[:statuses_count_history]  ||= {}
+
+    self[:friends_count_history][Date.current]   = friends_counter   if friends_counter_changed?
+    self[:followers_count_history][Date.current] = followers_counter if followers_counter_changed?
+    self[:statuses_count_history][Date.current]  = statuses_counter  if statuses_counter_changed?
+  end
 
   ##
   # 7) User Class Methods
@@ -245,6 +291,13 @@ class User < ActiveRecord::Base
   def self.initialize_subscriber_user(twitter_id)
     # Ensure that user exists
     User.find_or_create_by_twitter_id(twitter_id)
+
+    # Retrieve user
+    # (delay)
+    # REVIEW: THIS IS INEFFICIENT; AN API CALL WASTED
+    # MAYBE EXTEND WORKER TO USE DIFFERENT ENDPOINT IN CASE OF ONLY A FEW IDS TO BE RETRIEVED
+    # (to set updated_from_twitter_at, too)
+    UserLookupsWorker.perform_async(twitter_id)
 
     # Retrieve followerships and followers
     # (delay)

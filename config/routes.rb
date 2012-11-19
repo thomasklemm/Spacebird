@@ -1,8 +1,6 @@
 require 'sidekiq/web'
 
 Knight::Application.routes.draw do
-  get "home/index"
-
   # Devise authentication for subscribers
   devise_for  :subscribers,
               path_names:  {sign_in: 'login', sign_out: 'logout'},

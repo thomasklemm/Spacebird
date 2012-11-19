@@ -13,10 +13,15 @@ class TwitterClient
     credentials = self.new.credentials
 
     # Instantiate and return Twitter client
-    @client = Twitter::Client.new(
-        oauth_token:        credentials.token,
-        oauth_token_secret: credentials.secret
-      )
+    if credentials.present?
+      @client = Twitter::Client.new(
+          oauth_token:        credentials.token,
+          oauth_token_secret: credentials.secret
+        )
+    else
+      # else build a twitter client instance with the standard credentials
+      Twitter::Client.new
+    end
   end
 
   # Select random credentials
