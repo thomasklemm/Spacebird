@@ -10,8 +10,9 @@ class CreateUsers < ActiveRecord::Migration
       # Unusual naming because otherwise issues
       # with automatic counter cache
       # even if counter cache set to false
-      t.integer :friends_counter, default: 0
+      t.integer :friends_counter,   default: 0
       t.integer :followers_counter, default: 0
+      t.integer :statuses_counter,  default: 0
 
       # Twitter verified user
       t.boolean :verified, default: false
@@ -22,6 +23,11 @@ class CreateUsers < ActiveRecord::Migration
       # Twitter name and description
       t.string :name
       t.string :description
+
+      # Stats history
+      t.text :friends_count_history
+      t.text :followers_count_history
+      t.text :statuses_count_history
 
       # Times of updates of associations
       t.datetime :friendships_update_started_at
