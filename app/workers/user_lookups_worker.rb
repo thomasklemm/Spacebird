@@ -6,7 +6,9 @@
 class UserLookupsWorker
   include Sidekiq::Worker
 
-  def perform(*twitter_ids)
+  def perform(twitter_ids)
+    twitter_ids = twitter_ids.to_a.flatten
+
     # Get users from Twitter
     twitter_users = TwitterClient.random.users(twitter_ids)
 

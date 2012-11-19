@@ -195,13 +195,15 @@ class User < ActiveRecord::Base
   end
 
   # Retrieve user instances for twitter_ids in the background
-  def self.retrieve_users(*twitter_ids)
+  def self.retrieve_users(twitter_ids)
+    twitter_ids = twitter_ids.to_a.flatten.uniq
+
     # Slice off the first batch of 100 twitter_ids
     batch = twitter_ids.shift(100)
 
     # Perform user retrieval for this batch
     # (delay)
-    UserLookupsWorker.perform_async(batch)
+    UserLookupsWorker.perform_async(batch) if batch.present?
 
     # Rinse, repeat if there are still twitter_ids present
     retrieve_users(twitter_ids) if twitter_ids.present?
