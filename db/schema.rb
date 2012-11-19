@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121113114229) do
+ActiveRecord::Schema.define(:version => 20121119211120) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "subscriber_id"
@@ -68,6 +68,17 @@ ActiveRecord::Schema.define(:version => 20121113114229) do
 
   add_index "tokens", ["subscriber_id"], :name => "index_tokens_on_subscriber_id"
   add_index "tokens", ["twitter_id"], :name => "index_tokens_on_twitter_id"
+
+  create_table "user_histories", :force => true do |t|
+    t.integer  "user_id",    :null => false
+    t.text     "followers"
+    t.text     "friends"
+    t.text     "statuses"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "user_histories", ["user_id"], :name => "index_user_histories_on_user_id"
 
   create_table "users", :force => true do |t|
     t.integer  "twitter_id",                                          :null => false
