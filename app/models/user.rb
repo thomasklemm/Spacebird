@@ -7,10 +7,11 @@
 #  screen_name                      :string(255)
 #  friends_counter                  :integer          default(0)
 #  followers_counter                :integer          default(0)
+#  statuses_counter                 :integer          default(0)
 #  verified                         :boolean          default(FALSE)
 #  profile_image_url                :string(255)
 #  name                             :string(255)
-#  description                      :string(255)
+#  description                      :text
 #  friendships_update_started_at    :datetime
 #  friendships_update_finished_at   :datetime
 #  followerships_update_started_at  :datetime
@@ -165,7 +166,8 @@ class User < ActiveRecord::Base
   # Map and set attributes
   # and save user instance
   def retrieve_user
-    delay.perform_user_request(twitter_id)
+    # (delay)
+    User.delay.perform_user_request(twitter_id)
   end
 
   #
@@ -206,66 +208,30 @@ class User < ActiveRecord::Base
   #   Retrieves users in batches up to 100 from Twitter
 
   ##
-  # User history
+  # 8) User history
   has_one :user_history
 
-
-  # def friends_count_daily
-  #   user_history(:friends_count_history)
-  # end
-
-  # def followers_count_daily
-  #   user_history(:followers_count_history)
-  # end
-
-  # def statuses_count_daily
-  #   user_history(:statuses_count_history)
-  # end
-
-  # def user_history(field)
-  #   start_date = created_at.to_date
-  #   end_date = Date.current
-  #   history = []
-
-  #   date_range = start_date..end_date
-  #   date_range.each do |date|
-  #     history << user_history_at_date(field, date, start_date)
-  #   end
-
-  #   history
-  # end
-
-  # def user_history_at_date(field, date, start_date)
-  #   count = self[field][date]
-  #   if count.present?
-  #     return count
-  #   elsif date == start_date
-  #     return 0
-  #   else
-  #     user_history_at_date(field, date - 1.day)
-  #   end
-  # end
-
-  # before_save :set_user_history
-
-  # def set_user_history
-  #   # TWEAK: Ensure that full user object with history columns is loaded!
-  #   self[:friends_count_history]   ||= {}
-  #   self[:followers_count_history] ||= {}
-  #   self[:statuses_count_history]  ||= {}
-
-  #   self[:friends_count_history][Date.current]   = friends_counter   if friends_counter_changed?
-  #   self[:followers_count_history][Date.current] = followers_counter if followers_counter_changed?
-  #   self[:statuses_count_history][Date.current]  = statuses_counter  if statuses_counter_changed?
-  # end
+  # Write user history if statistical values change
+  before_save :set_user_history
 
   def set_user_history
+    return if new_record?
+
     # Create user history record unless it already exists
-    create_user_history() unless user_history.present?
+    create_user_history unless user_history.present?
 
-    # Set history values
-    user_history.statuses[Date.current]
+    # Set historical values
+    self.user_history.followers[Date.current] = followers_counter if followers_counter_changed?
+    self.user_history.friends[Date.current]   = friends_counter   if friends_counter_changed?
+    self.user_history.statuses[Date.current]  = statuses_counter  if statuses_counter_changed?
 
+    # Save history
+    self.user_history.save if user_history_changed?
+  end
+
+  # User history changes if any of the counters changes
+  def user_history_changed?
+    followers_counter_changed? || friends_counter_changed? || statuses_counter_changed?
   end
 
   ##
