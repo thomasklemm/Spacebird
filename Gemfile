@@ -52,6 +52,9 @@ gem 'devise'
 # Omniauth (Authentication through Twitter)
 gem 'omniauth-twitter'
 
+# Clockwork (Scheduling jobs)
+gem 'clockwork'
+
 # Production Gems
 group :production do
   # Memcached on Heroku
@@ -115,4 +118,7 @@ end
 group :test, :development do
   # Rspec (Behavior-Driven Development)
   gem 'rspec-rails'
+
+  # Timecop (for time travel :-D)
+  gem 'timecop'
 end

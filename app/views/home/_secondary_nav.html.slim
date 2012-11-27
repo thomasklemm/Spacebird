@@ -1,0 +1,84 @@
+/! Secondary nav
+.secNav
+  .secWrapper
+    .secTop
+      .balance
+        .balInfo
+          | Followers
+          span #{Date.today.to_s(:long)}
+
+        /! Stats per month for the last twelve months (not available at first - last 12 days, laster last 12 weeks)
+        .balAmount
+          span.balBars
+            /! #{(1..12).to_a.join(',')}
+          span 1,990
+      a.triangle-red href="#"
+
+    /! Tabs container
+    #tab-container.tab-container
+      ul.iconsLine.ic2.etabs
+        li
+          a href="#new" title=""
+            b New
+        li
+          a href="#influential" title=""
+            b Influential
+
+      div style='margin-top: 12px'
+
+      #new
+
+        /! Sidebar chart stats
+        h5 style='text-align: center; margin-bottom: 12px' New followers
+        .numStats2
+          ul
+            li
+              / font a little smaller
+              a href="#" title="" + 10
+              span this week
+            li.last
+              a href="#" title="" + 100
+              span this month
+          .clear
+
+        .divider
+          span
+
+        /! Sidebar user list
+        ul.userList
+          li
+            a href="#" title=""
+              img alt="" src="images/live/face1.png"
+              span.contactName
+                strong
+                  | Eugene Kopyov
+                i web & ui designer
+              span.clear
+          li
+            a href="#" title=""
+              img alt="" src="images/live/face2.png"
+              span.contactName
+                strong
+                  | Lucy Wilkinson
+                i Team leader
+              span.clear
+          li
+            a href="#" title=""
+              img alt="" src="images/live/face3.png"
+              span.contactName
+                strong John Dow
+                i PHP developer
+              span.clear
+        .clear
+
+      #influential
+        /! Sidebar big buttons
+        .sidePad
+          a.sideB.bLightBlue href="#" title="" I want to see more!
+
+        .divider
+        .clear
+
+  .clear
+
+/! Secondary nav ends

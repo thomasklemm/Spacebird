@@ -1,0 +1,103 @@
+/! Main nav
+.mainNav
+
+  /! User in Sidebar
+  .user
+    a.leftUserDrop title=""
+      img alt="" src="#{@subscriber.profile_image_url}"
+    span = @subscriber.name
+    ul.leftUser
+      li: a.sProfile href="#" title=""  My profile
+      li: a.sMessages href="#" title="" Messages
+      li: a.sSettings href="#" title="" Settings
+      li: a.sLogout href="#" title="" Logout
+
+  /! Responsive nav
+  / (removed)
+
+  /! Main nav
+  ul.nav
+    li
+      a.active href="#" title=""
+        img alt="" src="images/icons/mainnav/dashboard.png"
+        span Dashboard
+    li
+      a href="#" title=""
+        img alt="" src="images/icons/mainnav/ui.png"
+        span Followers
+      ul
+        li
+          a href="#" title=""
+            span.icon-facetime-video
+            | General elements
+        li
+          a href="#" title=""
+            span.icol-images2
+            | Icons
+        li
+          a href="#" title=""
+            span.icol-coverflow
+            | Button sets
+        li
+          a href="#" title=""
+            span.icol-view
+            | Grid
+        li
+          a href="#" title=""
+            span.icol-cog2
+            | Custom elements
+        li
+          a href="#" title=""
+            span.icol-beta
+            | Experimental
+
+    li
+      a href="#" title=""
+        img alt="" src="images/icons/mainnav/ui.png"
+        span Friends
+      ul
+        li
+          a href="#" title=""
+            span.icol-list
+            | Inputs & elements
+        li
+          a href="#" title=""
+            span.icol-alert
+            | Validation
+        li
+          a href="#" title=""
+            span.icol-pencil
+            | File uploader & WYSIWYG
+        li
+          a href="#" title=""
+            span.icol-signpost
+            | Form wizards
+
+    li
+      a href="#" title=""
+        img alt="" src="images/icons/mainnav/statistics.png"
+        span Statistics
+
+    li
+      a href="#" title=""
+        img alt="" src="images/icons/mainnav/tables.png"
+        span Tables
+      ul
+        li
+          a href="#" title=""
+            span.icol-frames
+            | Standard tables
+        li
+          a href="#" title=""
+            span.icol-refresh
+            | Dynamic table
+        li
+          a href="#" title=""
+            span.icol-bullseye
+            | Tables with control
+        li
+          a href="#" title=""
+            span.icol-transfer
+            | Sortable and resizable
+
+/! Main nav ends

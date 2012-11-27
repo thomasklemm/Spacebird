@@ -1,4 +1,5 @@
 # == Schema Information
+# Schema version: 20121119211120
 #
 # Table name: subscribers
 #
@@ -17,9 +18,13 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
+# Indexes
+#
+#  index_subscribers_on_remember_token  (remember_token)
+#  index_subscribers_on_username        (username) UNIQUE
+#
 
 require 'spec_helper'
 
 describe Subscriber do
-  pending "add some examples to (or delete) #{__FILE__}"
 end

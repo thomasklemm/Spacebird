@@ -1,4 +1,5 @@
 # == Schema Information
+# Schema version: 20121119211120
 #
 # Table name: friendships
 #
@@ -12,6 +13,11 @@
 #  last_active_at    :datetime
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#
+# Indexes
+#
+#  index_friendships_on_user_id_and_friend_id                  (user_id,friend_id)
+#  index_friendships_on_user_twitter_id_and_friend_twitter_id  (user_twitter_id,friend_twitter_id)
 #
 
 class Friendship < ActiveRecord::Base

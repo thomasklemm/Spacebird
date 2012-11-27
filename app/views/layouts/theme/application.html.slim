@@ -1,0 +1,15 @@
+/ layouts/theme/application
+
+doctype 5
+html lang='en'
+
+  / head
+  head
+    = render 'layouts/theme/head'
+
+  / body
+  body
+    = yield
+
+    / javascripts body (e.g. livereload)
+    = render 'javascripts_body'

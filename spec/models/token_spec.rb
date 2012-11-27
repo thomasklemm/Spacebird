@@ -1,4 +1,5 @@
 # == Schema Information
+# Schema version: 20121119211120
 #
 # Table name: tokens
 #
@@ -10,9 +11,13 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
+# Indexes
+#
+#  index_tokens_on_subscriber_id  (subscriber_id)
+#  index_tokens_on_twitter_id     (twitter_id)
+#
 
 require 'spec_helper'
 
 describe Token do
-  pending "add some examples to (or delete) #{__FILE__}"
 end

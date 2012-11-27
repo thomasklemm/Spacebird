@@ -18,5 +18,5 @@ Knight::Application.routes.draw do
 
   # Root
   # (also required for devise)
-  root to: 'high_voltage/pages#show', id: 'index'
+  root to: 'home#index'
 end

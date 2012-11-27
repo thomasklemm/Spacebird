@@ -1,4 +1,5 @@
 # == Schema Information
+# Schema version: 20121119211120
 #
 # Table name: authentications
 #
@@ -9,9 +10,12 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
+# Indexes
+#
+#  index_authentications_on_subscriber_id  (subscriber_id)
+#
 
 require 'spec_helper'
 
 describe Authentication do
-  pending "add some examples to (or delete) #{__FILE__}"
 end
