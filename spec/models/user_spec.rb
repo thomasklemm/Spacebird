@@ -1,4 +1,5 @@
 # == Schema Information
+# Schema version: 20121119211120
 #
 # Table name: users
 #
@@ -20,6 +21,11 @@
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
 #  subscriber                       :boolean          default(FALSE)
+#
+# Indexes
+#
+#  index_users_on_screen_name  (screen_name) UNIQUE
+#  index_users_on_twitter_id   (twitter_id) UNIQUE
 #
 
 describe User do

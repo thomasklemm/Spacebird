@@ -1,4 +1,5 @@
 # == Schema Information
+# Schema version: 20121119211120
 #
 # Table name: subscribers
 #
@@ -16,6 +17,11 @@
 #  last_sign_in_ip     :string(255)
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#
+# Indexes
+#
+#  index_subscribers_on_remember_token  (remember_token)
+#  index_subscribers_on_username        (username) UNIQUE
 #
 
 require 'spec_helper'

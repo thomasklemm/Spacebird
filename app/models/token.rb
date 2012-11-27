@@ -1,4 +1,5 @@
 # == Schema Information
+# Schema version: 20121119211120
 #
 # Table name: tokens
 #
@@ -9,6 +10,11 @@
 #  secret        :string(255)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#
+# Indexes
+#
+#  index_tokens_on_subscriber_id  (subscriber_id)
+#  index_tokens_on_twitter_id     (twitter_id)
 #
 
 class Token < ActiveRecord::Base
