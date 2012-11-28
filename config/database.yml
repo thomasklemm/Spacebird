@@ -8,7 +8,7 @@ development:
   database: spacebird_development
   host: localhost
   encoding: unicode
-  pool: 20
+  pool: 50
   username: thomasklemm
   password: development
 
@@ -20,4 +20,4 @@ test:
   database: spacebird_test
   host: localhost
   encoding: unicode
-  pool: 20
+  pool: 50
