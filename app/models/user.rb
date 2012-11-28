@@ -221,6 +221,7 @@ class User < ActiveRecord::Base
   before_save :set_user_history
 
   def set_user_history
+    # set history if record is persisted already
     return if new_record?
 
     # Create user history record unless it already exists
@@ -232,10 +233,12 @@ class User < ActiveRecord::Base
     self.user_history.statuses[Date.current]  = statuses_counter  if statuses_counter_changed?
 
     # Save history
+    # if any of the counters changes
     self.user_history.save if user_history_changed?
   end
 
-  # User history changes if any of the counters changes
+  # User history changes
+  # if any of the counters changes
   def user_history_changed?
     followers_counter_changed? || friends_counter_changed? || statuses_counter_changed?
   end
