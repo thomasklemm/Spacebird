@@ -5,7 +5,7 @@ class CreateUsers < ActiveRecord::Migration
       # Unique Twitter id
       t.integer :twitter_id, null: false
       # Screen_name is Twitter login, is unique, but may change
-      t.string :screen_name
+      t.text :screen_name
 
       # Unusual naming because otherwise issues
       # with automatic counter cache
@@ -18,10 +18,10 @@ class CreateUsers < ActiveRecord::Migration
       t.boolean :verified, default: false
 
       # Twitter avatar
-      t.string :profile_image_url
+      t.text :profile_image_url
 
       # Twitter name and description
-      t.string :name
+      t.text :name
       t.text :description
 
       # Times of updates of associations

@@ -55,6 +55,9 @@ gem 'omniauth-twitter'
 # Clockwork (Scheduling jobs)
 gem 'clockwork'
 
+# Data Faker
+gem 'ffaker'
+
 # Production Gems
 group :production do
   # Memcached on Heroku

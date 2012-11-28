@@ -5,13 +5,13 @@
 #
 #  id                               :integer          not null, primary key
 #  twitter_id                       :integer          not null
-#  screen_name                      :string(255)
+#  screen_name                      :text
 #  friends_counter                  :integer          default(0)
 #  followers_counter                :integer          default(0)
 #  statuses_counter                 :integer          default(0)
 #  verified                         :boolean          default(FALSE)
-#  profile_image_url                :string(255)
-#  name                             :string(255)
+#  profile_image_url                :text
+#  name                             :text
 #  description                      :text
 #  friendships_update_started_at    :datetime
 #  friendships_update_finished_at   :datetime
@@ -221,7 +221,7 @@ class User < ActiveRecord::Base
   before_save :set_user_history
 
   def set_user_history
-    # set history if record is persisted already
+    # set history if record is persisted already (id nescessary)
     return if new_record?
 
     # Create user history record unless it already exists
@@ -331,10 +331,11 @@ class User < ActiveRecord::Base
   attr_accessible :twitter_id,
                   :screen_name,
                   :name,
-                  :friends_count,
-                  :followers_count,
-                  :verified,
+                  :friends_counter,
+                  :followers_counter,
+                  :statuses_counter,
                   :profile_image_url,
                   :image_url,
-                  :description
+                  :description,
+                  :verified
 end
