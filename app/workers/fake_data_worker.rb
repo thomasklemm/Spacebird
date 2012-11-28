@@ -5,10 +5,9 @@ class FakeDataWorker
   # and store it on Heroku Postgres
   # Let's see how it performs! :-D
   def perform(n = 1000)
-    n.times do
-      begin
-        create_fake_user
-      rescue
+    (n/100).times do
+      ActiveRecord::Base.transaction do
+        100.times { create_fake_user rescue false}
       end
     end
 
@@ -30,9 +29,14 @@ class FakeDataWorker
     u.followers_counter = fake_counter
     u.statuses_counter = fake_counter
 
+    u.updated_from_twitter_at = Time.zone.now
+    u.friendships_update_started_at = Time.zone.now - 2.days
+    u.followerships_update_started_at = Time.zone.now - 1.day
+
     u.save
 
-    # Second save to insert history
+    # Another save to insert history
+    # For more history time-traveling might come in handy :-D
     u.friends_counter = fake_counter
     u.followers_counter = fake_counter
     u.statuses_counter = fake_counter
