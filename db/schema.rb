@@ -82,13 +82,13 @@ ActiveRecord::Schema.define(:version => 20121119211120) do
 
   create_table "users", :force => true do |t|
     t.integer  "twitter_id",                                          :null => false
-    t.string   "screen_name"
+    t.text     "screen_name"
     t.integer  "friends_counter",                  :default => 0
     t.integer  "followers_counter",                :default => 0
     t.integer  "statuses_counter",                 :default => 0
     t.boolean  "verified",                         :default => false
-    t.string   "profile_image_url"
-    t.string   "name"
+    t.text     "profile_image_url"
+    t.text     "name"
     t.text     "description"
     t.datetime "friendships_update_started_at"
     t.datetime "friendships_update_finished_at"
