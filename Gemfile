@@ -58,6 +58,9 @@ gem 'clockwork'
 # Data Faker
 gem 'ffaker'
 
+# OHM (Object Hash Mapping)
+gem 'ohm'
+
 # Production Gems
 group :production do
   # Memcached on Heroku
