@@ -26,7 +26,7 @@ class UserFriendshipsWorker
     # Set friendships_update_started_at timestamp
     # if the first page is going to be retrieved
     if opts[:cursor] == -1
-      user.update_column(:friendships_update_started_at, Time.now.utc)
+      user.update_column(:friendships_update_started_at, Time.zone.now)
     end
 
     # Request friend ids
@@ -42,7 +42,7 @@ class UserFriendshipsWorker
     user_friendships = user.friendships.where(friend_twitter_id: friend_twitter_ids)
     user_friendships.each do |f|
       # REVIEW: Maybe an update_all is possible? (1 - 100 SQL calls could replace up to 5000)
-      f.update_column(:last_active_at, Time.now.utc)
+      f.update_column(:last_active_at, Time.zone.now)
     end
 
     # Load next page asyncronously (delayed)
@@ -82,7 +82,7 @@ class UserFriendshipsWorker
           f.friend_twitter_id = friend.twitter_id
 
           # Set first_active_at timestamp
-          f.first_active_at   = Time.now.utc
+          f.first_active_at   = Time.zone.now
         end
       end
     end

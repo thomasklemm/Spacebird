@@ -38,7 +38,7 @@ gem 'cache_digests'
 gem 'formtastic'
 
 # Twitter
-gem 'twitter'
+gem 'twitter', github: 'sferik/twitter'
 
 # OJ (Optimized Json Parsing)
 gem 'oj'
@@ -57,6 +57,9 @@ gem 'clockwork'
 
 # Data Faker
 gem 'ffaker'
+
+# OHM (Object Hash Mapping)
+gem 'ohm'
 
 # Production Gems
 group :production do

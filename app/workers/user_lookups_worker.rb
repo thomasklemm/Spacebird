@@ -11,7 +11,7 @@ class UserLookupsWorker
     twitter_ids = twitter_ids.flatten
 
     # Get users from Twitter
-    twitter_users = TwitterClient.random.users(twitter_ids)
+    twitter_users = TwitterClient.random.users(twitter_ids, method: :get)
 
     # Iterate over twitter_users
     twitter_users.each do |twitter_user|
@@ -22,7 +22,7 @@ class UserLookupsWorker
       user.map_and_set_user_attributes(twitter_user)
 
       # Set updated_from_twitter_at timestamp
-      user.updated_from_twitter_at = Time.now.utc
+      user.updated_from_twitter_at = Time.zone.now
 
       # Save user
       user.save
