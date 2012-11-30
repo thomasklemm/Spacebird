@@ -38,7 +38,7 @@ gem 'cache_digests'
 gem 'formtastic'
 
 # Twitter
-gem 'twitter'
+gem 'twitter', github: 'sferik/twitter'
 
 # OJ (Optimized Json Parsing)
 gem 'oj'

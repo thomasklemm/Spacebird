@@ -21,7 +21,7 @@ class UserFlagOutdatedFriendshipsWorker
     end
 
     # Set follwerships_update_finished_at flag on user
-    user.update_column(:friendships_update_finished_at, Time.now.utc)
+    user.update_column(:friendships_update_finished_at, Time.zone.now)
     return
   end
 end
